@@ -27,6 +27,8 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     follow_redirect!
     assert_template 'users/show'
-    assert_not flash.empty?
+    assert is_logged_in?
+    # is_logged_in?でユーザー登録の終わったら即座にログイン状態になっているかどうかを確認してる
+    # リスト 8.41:ユーザー登録後のログインのテストでassert_not flash.empty?が消えてた何故？
   end
 end

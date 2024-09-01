@@ -96,6 +96,25 @@ footer {
     }
   }
 }
+// 800ピクセル以下になると、@media 内で定義されたスタイルが上書きされて適用されます。
+@media (max-width: 800px) {
+  footer {
+    small {
+      display: block;
+      float: none;
+      margin-bottom: 1em;
+    }
+    ul {
+      float: none;
+      padding: 0;
+      li {
+        float: none;
+        margin-left: 0;
+      }
+    }
+  }
+}
+
 
 /* miscellaneous */
 
@@ -181,3 +200,14 @@ input {
     color: $state-danger-text;
   }
 }
+
+/* DropdownMenu リスト8.22:ドロップダウンメニューを有効にするCSS */
+
+.dropdown-menu.active {
+  display: block;
+}
+
+
+
+
+

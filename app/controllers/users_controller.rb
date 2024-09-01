@@ -13,6 +13,8 @@ class UsersController < ApplicationController
   def create #ユーザーを作成するアクション、form_withのヘルパーによって呼び出される
     @user = User.new(user_params)
     if @user.save
+      reset_session
+      log_in @user
       redirect_to @user
       flash[:success] = "Welcome to the Sample App!"
       # redirect_to user_url(@user)と同等です。
