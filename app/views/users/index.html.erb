@@ -1,0 +1,11 @@
+<% provide(:title, 'All users') %>
+<h1>All users</h1>
+
+<%= will_paginate %>
+
+<ul class="users">
+  <%= render @users %>
+  <%# render @usersを使うと、Railsは@usersがUserオブジェクトのコレクションであることを自動的に認識し、それぞれのユーザーオブジェクトに対して対応するパーシャル（_user.html.erb）を利用してレンダリングします。 %>
+</ul>
+
+<%= will_paginate %>

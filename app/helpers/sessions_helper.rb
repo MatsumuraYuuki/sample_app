@@ -11,12 +11,13 @@ module SessionsHelper
 
   # 永続的セッションのためにユーザーを[データベースに]記憶する
   def remember(user)
-    user.remember #models/user.rbで定義  トークンを生成してデータベースに保存する
+    user.remember #models/user.rbで定義  トークンを生成してデータベースに保存
     cookies.permanent.encrypted[:user_id] = user.id
     cookies.permanent[:remember_token] = user.remember_token
-    # remember(user)メソッドは、user.rememberメソッドを内部で呼び出して、さらにクッキーにトークンやユーザーIDを保存する役割を持っています。
+    # remember(user)メソッドは、user.rememberメソッドを内部で呼び出し、さらにクッキーにトークンやユーザーIDを保存する。
   end
 
+  # 記憶トークンのcookieに対応するユーザーを返す
   def current_user
     if (user_id = session[:user_id])
       user = User.find_by(id: user_id)
@@ -35,6 +36,11 @@ module SessionsHelper
     #2暗号化されたクッキーからユーザーIDと認証情報を取得する（「ログイン状態を保持する」機能のため）。
   end
 
+  # 渡されたユーザーがカレントユーザーであればtrueを返す:リスト10.27
+ def current_user?(user)
+   user && user == current_user
+ end
+
     # ユーザーがログインしていればtrue、その他ならfalseを返す
   def logged_in?
     !current_user.nil?
@@ -52,5 +58,11 @@ module SessionsHelper
     forget(current_user)
     reset_session
     @current_user = nil  #安全のため,このメソッドは、Sessionsコントローラのdestroyアクションで使えます
+  end
+
+   def store_location
+    # リクエストされたURLを取得し、GETリクエストの場合のみそのURLを返すという処理
+    # requestは、Railsで提供されるコントローラ内のオブジェクト。具体的には、requestはActionDispatch::Requestのインスタンスであり、HTTPリクエストの詳細を保持しています。
+    session[:forwarding_url] = request.original_url if request.get?
   end
 end
