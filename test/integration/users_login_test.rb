@@ -7,6 +7,7 @@ class UsersLogin < ActionDispatch::IntegrationTest
   end
 end
 
+#親クラスからsetupメソッドを継承,UsersLoginクラスにsetupメソッドが定義されている
 class InvalidPasswordTest < UsersLogin
 
   test "login path" do
@@ -25,9 +26,10 @@ class InvalidPasswordTest < UsersLogin
   end
 end
 
+# setupメソッドをオーバーライドすることによってUsersLoginクラスのsetupメソッドではなく、ValidLoginクラスのメソッドを使用できる
 class ValidLogin < UsersLogin
 
-  def setup
+  def setup  #有効なログインのセットアップ
     super
     post login_path, params: { session: { email:    @user.email,
                                           password: 'password' } }
@@ -97,51 +99,3 @@ class RememberingTest < UsersLogin
 end
 
 
-
-#   test "login with valid email/invalid password" do
-#     get login_path
-#     assert_template 'sessions/new'
-#     post login_path, params: { session: { email:    @user.email,
-#                                           password: "invalid" } }
-#     assert_not is_logged_in?                                 
-#     assert_response :unprocessable_entity
-#     assert_template 'sessions/new'
-#     assert_not flash.empty?
-#     get root_path
-#     assert flash.empty?
-
-#     #1ログイン用のパスを開く
-#     #2新しいセッションのフォームが正しく表示されたことを確認する
-#     #3わざと無効なparamsハッシュを使ってセッション用パスにPOSTする(valid email/invalid password)
-#     #4,5新しいセッションのフォームが正しいステータスを返し、再度表示されることを確認する
-#     #6フラッシュメッセージが表示されることを確認する
-#     #7別のページ（Homeページなど） にいったん移動する
-#     #8移動先のページでフラッシュメッセージが表示されていないことを確認する
-#   end
-
-#   test "login with valid information followed by logout" do
-#     post login_path, params: { session: { email:    @user.email,
-#                                           password: 'password' } }
-#     assert is_logged_in?   #is_logged_in?を利用できるようにしてあったおかげで簡単にテストできる
-#     assert_redirected_to @user
-#     follow_redirect!
-#     assert_template 'users/show'
-#     assert_select "a[href=?]", login_path, count: 0
-#     assert_select "a[href=?]", logout_path
-#     assert_select "a[href=?]", user_path(@user)
-#     #1ログイン用のパスを開く
-#     #2セッション用パスに有効な情報をPOSTする
-#     #3ログイン用リンクが表示されなくなったことを確認する
-#     #4ログアウト用リンクが表示されていることを確認する
-#     #5プロフィール用リンクが表示されていることを確認する
-
-#     #8.3で追加　何これ？
-#     delete logout_path
-#     assert_not is_logged_in?
-#     assert_response :see_other
-#     assert_redirected_to root_url
-#     follow_redirect!
-#     assert_select "a[href=?]", login_path
-#     assert_select "a[href=?]", logout_path,      count: 0
-#     assert_select "a[href=?]", user_path(@user), count: 0
-#   end

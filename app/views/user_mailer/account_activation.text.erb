@@ -1,0 +1,7 @@
+#account_activation用のHTML形式とプレーンテキスト形式のメールテンプレート。メールの本文をここに記述。
+
+Hi <%= @user.name %>,
+
+Welcome to the Sample App! Click on the link below to activate your account:
+
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>

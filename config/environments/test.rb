@@ -41,7 +41,10 @@ Rails.application.configure do
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
+  # テスト環境では、メールの実際の送信は行わず、:test という特殊なモードを使用します。これにより、メールがテストで生成されるが、実際には送信されない状態となります。
   config.action_mailer.delivery_method = :test
+  # メールで生成されるURLのホスト部分を設定しています。このホストは、テスト時に使用されるダミーのものです。実際の運用環境では example.com ではなく、適切なホスト名を設定します
+  config.action_mailer.default_url_options = { host: 'example.com' }
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr

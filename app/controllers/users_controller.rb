@@ -7,7 +7,7 @@ class UsersController < ApplicationController
 
 
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
     # User.paginate
     # User.paginateは、:pageパラメーターに基いて、データベースからひとかたまりのデータ（デフォルトでは30）を取り出します。したがって、1ページ目はユーザー1から30、2ページ目はユーザー31から60、という具合にデータが取り出されます。
   end
@@ -15,8 +15,8 @@ class UsersController < ApplicationController
 
   def show #id=xのユーザーを表示するページ
     @user = User.find(params[:id])
-    # debugger
-    # （演習newメソッドに移したがそのままで良いのか分からんので戻した）
+    #アクティブでないユーザーのプロフィールページにアクセスしようとすると、自動的にホームページにリダイレクト
+    redirect_to root_url and return unless @user.activated?
   end
 
   def new #新規ユーザー作成ページ
@@ -26,11 +26,9 @@ class UsersController < ApplicationController
   def create #ユーザーを作成するアクション、form_withのヘルパーによって呼び出される
     @user = User.new(user_params)
     if @user.save
-      reset_session
-      log_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
-      # redirect_to @userは user_url(@user)と同等です。
+      @user.send_activation_email
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render 'new', status: :unprocessable_entity
       # 保存が失敗した場合は new テンプレートを再度表示します（このとき、エラーメッセージも表示されす）。
