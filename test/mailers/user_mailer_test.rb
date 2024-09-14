@@ -9,7 +9,7 @@ class UserMailerTest < ActionMailer::TestCase
     mail = UserMailer.account_activation(user)
     assert_equal "Account activation", mail.subject
     assert_equal [user.email], mail.to
-    assert_equal ["user@realdomain.com"], mail.from
+    assert_equal ["absol57434@gmail.com"], mail.from
     assert_match user.name,               mail.body.encoded
     assert_match user.activation_token,   mail.body.encoded
     #URL内の特殊文字（@ や . など）はエンコード（別の形式に変換）されるため、CGI.escape(user.email) を使って、URLでメールアドレスが正しくエンコードされているかどうかを確認しています。
