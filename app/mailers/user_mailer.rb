@@ -8,11 +8,8 @@ class UserMailer < ApplicationMailer
     # mailはメソッド。UserMailerクラス内で定義されているこのメソッドは、ActionMailerモジュールによって提供されており、メールの送信先(to)、件名(subject)を指定することができます。
   end
 
-
-
-  def password_reset
-    @greeting = "Hi"
-
-    mail to: "to@example.org"
+  def password_reset(user)
+    @user = user
+    mail to: user.email, subject: "Password reset"
   end
 end
