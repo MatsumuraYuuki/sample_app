@@ -46,6 +46,7 @@ class AccountActivationTest < UsersSignup
                                         password:              "password",
                                         password_confirmation: "password" } }
     #post users_pathはcreateアクションを呼ぶのでそこのインスタンス変数にアクセスする
+    # テストではコントローラ内で設定されたインスタンス変数に直接アクセスできないがassignsを使うことで、コントローラのインスタンス変数を取得し、それを使ってテスト内で値が正しいかどうか確認したり、他の操作に使える
     @user = assigns(:user)
   end
 

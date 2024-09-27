@@ -15,6 +15,8 @@ class UsersController < ApplicationController
 
   def show #id=xのユーザーを表示するページ
     @user = User.find(params[:id])
+    #will_paginateは、@usersを前提としているので、@microposts変数で使うことをを明示的に渡す
+    @microposts = @user.microposts.paginate(page: params[:page])
     #アクティブでないユーザーのプロフィールページにアクセスしようとすると、自動的にホームページにリダイレクト
     redirect_to root_url and return unless @user.activated?
   end
@@ -67,16 +69,7 @@ class UsersController < ApplicationController
 
 
 
-  # beforeフィルタ
-
-  # ログイン済みユーザーかどうか確認
-  def logged_in_user
-    unless logged_in? #ログインしてない時に処理を実行
-      store_location
-      flash[:danger] = "Please log in."
-      redirect_to login_url, status: :see_other
-    end
-  end
+  # beforeフィルター
 
   # 正しいユーザーかどうか確認　current_userメソッドじゃないよ！
   def correct_user

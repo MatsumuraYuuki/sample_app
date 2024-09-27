@@ -2,6 +2,8 @@
 #例えば、ユーザーがパスワードリセットの期限を過ぎているかどうかを判断するロジックは、ユーザーというデータに直接関連しています。そのため、このようなメソッドは User モデル内に置かれるべきです。
 
 class User < ApplicationRecord
+  # モデルとモデルの間に関連付け(association)を設定. ユーザーが投稿したマイクロポストも一緒に削除される
+  has_many :microposts, dependent: :destroy
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save   :downcase_email
   before_create :create_activation_digest
@@ -86,9 +88,15 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
+  # 試作feedの定義
+  # 完全な実装は次章の「ユーザーをフォローする」を参照
+  # すべてのユーザーがフィードを持つので、feedメソッドはUserモデルで作るのが自然
+  def feed
+  # 下の「?」があることで、SQLクエリに代入する前にidがエスケープされるため、SQLインジェクション（SQL Injection）と呼ばれる深刻なセキュリティホールを回避できます
+    Micropost.where("user_id = ?", id)
+  end
 
 
-  private  
 
   private
 
