@@ -10,6 +10,8 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
 
   test "profile display" do
     get user_path(@user)
+    assert_select 'strong#following'  #<strong>タグにid="following"が設定されている要素を探す
+    assert_select 'strong#followers' #ちなid="following"があるファイルはshared/_stats.html.erb
     assert_template 'users/show'
     assert_select 'title', full_title(@user.name)
     assert_select 'h1', text: @user.name

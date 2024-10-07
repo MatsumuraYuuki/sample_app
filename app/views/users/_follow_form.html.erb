@@ -1,0 +1,10 @@
+<%#この行は、ログインしているユーザーが @userでない場合にのみ、以下のフォロー/フォロー解除フォームを表示するための条件を設定しています。current_user?(@user) が true の場合、ログインしているユーザーが@userと同一人物であることを意味します。その場合は、自分自身をフォローできないので、フォームは表示されません。%>
+<% unless current_user?(@user) %>
+  <div id="follow_form">
+  <% if current_user.following?(@user) %>
+    <%= render 'unfollow' %>
+  <% else %>
+    <%= render 'follow' %>
+  <% end %>
+  </div>
+<% end %>

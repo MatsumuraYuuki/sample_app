@@ -10,9 +10,16 @@ Rails.application.routes.draw do
   get '/login',    to: "sessions#new" 
   post '/login',   to: "sessions#create" 
   delete '/logout',   to: "sessions#destroy" 
-  resources :users
+  # resources :usersに加えて、followingとfollowersというカスタムルートを追加
+  resources :users do
+    # memberというキーワードは、現在のリソース(users)の個別のインスタンスに関連付くルートを定義するという意味
+    member do
+      get :following, :followers
+    end
+  end  
   resources :account_activations, only: [:edit]
   resources :password_resets,     only: [:new, :create, :edit, :update]
   resources :microposts,          only: [:create, :destroy]
+  resources :relationships,       only: [:create, :destroy]
   get '/microposts', to: 'static_pages#home'
 end 

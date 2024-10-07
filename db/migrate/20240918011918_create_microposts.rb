@@ -1,6 +1,6 @@
-# このマイグレーションファイルは、microposts テーブルを作成するだけでなく、user_idとcreated_atの組み合わせに対するインデックスを追加することで、パフォーマンスを最適化しています。特に、ユーザーが作成したマイクロポストを時間順に効率よく取得できるようになります。
 class CreateMicroposts < ActiveRecord::Migration[7.0]
   def change
+    # create_table を使うとき、 t.text :contentやt.references :user〜〜 は、新しいテーブルを作成すると同時にカラムを定義するために使われます。つまり、テーブルを作成する際に、そのテーブルにどのようなカラムを持たせるかを指定している部分です。
     create_table :microposts do |t|
       t.text :content
       t.references :user, null: false, foreign_key: true

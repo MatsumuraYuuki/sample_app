@@ -1,5 +1,6 @@
 class Micropost < ApplicationRecord
-  #ユーザーと1対1の関係であることを表す。$rails generate〜にuser:referencesという引数も含めたから追加された
+  #ユーザーと1対1の関係であることを表す。has_manyはmicropostが複数持つので複数形。belongs_to:userは単数系
+  # $rails generate〜にuser:referencesという引数も含めたから追加された
   belongs_to :user
   #has_one_attachedでimageとMicropostモデルを関連付けます。　
   # do |attachable|　←このブロック内で、添付された画像に関する追加の処理を定義します。

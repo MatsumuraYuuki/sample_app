@@ -3,7 +3,20 @@
 
 class User < ApplicationRecord
   # モデルとモデルの間に関連付け(association)を設定. ユーザーが投稿したマイクロポストも一緒に削除される
+  # has_manyはmicropostが複数持つので複数形。belongs_to :userは単数系
   has_many :microposts, dependent: :destroy
+
+  has_many :active_relationships, class_name:  "Relationship",#Rails正しいクラス名を伝える
+                                  foreign_key: "follower_id", #外部キー
+                                  dependent:   :destroy
+  has_many :passive_relationships, class_name:  "Relationship",
+                                  foreign_key: "followed_id",
+                                  dependent:   :destroy
+  #sourceパラメーターを使って、following配列の出どころ(source)はfollowed idのコレクションである」ことを明示的にRailsに伝えます
+  # followedsは文法的に不適切なので、代わりにuser.followingという名前を使う
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower
+
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save   :downcase_email
   before_create :create_activation_digest
@@ -88,12 +101,33 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
-  # 試作feedの定義
-  # 完全な実装は次章の「ユーザーをフォローする」を参照
   # すべてのユーザーがフィードを持つので、feedメソッドはUserモデルで作るのが自然
   def feed
-  # 下の「?」があることで、SQLクエリに代入する前にidがエスケープされるため、SQLインジェクション（SQL Injection）と呼ばれる深刻なセキュリティホールを回避できます
-    Micropost.where("user_id = ?", id)
+    #"user_id = ?"　の「?」はプレースホルダーで、動的に値を第二引数から挿入することを表しています。これをする理由はSQLインジェクションの防止のためです
+    # INは、SQLで複数の値を指定して、カラムがこれらの値のいずれかと一致するレコードを検索する際に使用
+    #WHERE user_id IN(<idのリスト>) は例えば,idのリストが1,2,3の場合、user_idが1,2,3のレコードを取得
+    following_ids = "SELECT followed_id FROM relationships
+    WHERE  follower_id = :user_id"
+    Micropost.where("user_id IN (#{following_ids})
+                     OR user_id = :user_id", user_id: id)
+                     .includes(:user, image_attachment: :blob)
+    # ()の中はマイクロポストに対応するユーザーと、添付画像があればその画像
+  end
+  
+  # followingで取得したオブジェクトは、配列と同様に要素の追加や削除も可能。<<演算子で配列の末尾に追加できます
+   def follow(other_user)
+    #unless self == other_userが必要な理由は、ユーザーが自分自身をフォローすることを防ぐため
+    following << other_user unless self == other_user
+  end
+
+  # ユーザーをフォロー解除する
+  def unfollow(other_user)
+    following.delete(other_user)
+  end
+
+  # 現在のユーザーが他のユーザーをフォローしていればtrueを返す
+  def following?(other_user)
+    following.include?(other_user)
   end
 
 
